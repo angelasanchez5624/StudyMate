@@ -54,6 +54,11 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation("androidx.drawerlayout:drawerlayout:1.2.0") // menú ☰ de Perfil
     implementation("org.osmdroid:osmdroid-android:6.1.20") // mapas de OpenStreetMap
+    implementation("androidx.core:core-splashscreen:1.0.1") // pantalla de carga (splash)
+    // Iniciar sesión con Google (Credential Manager + Firebase Auth)
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

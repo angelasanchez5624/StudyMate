@@ -1,10 +1,7 @@
 package com.example.studymate;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.widget.Toast;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.config.IConfigurationProvider;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
@@ -84,16 +81,26 @@ public class Mapa {
         return m;
     }
 
-    /** Abre la app de mapas del teléfono (Google Maps u otra) para llegar al lugar. */
-    public static void comoLlegar(Context c, double lat, double lon, String nombre) {
-        String q = lat + "," + lon + "(" + Uri.encode(nombre) + ")";
-        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:" + lat + "," + lon + "?q=" + q));
-        try {
-            c.startActivity(i);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(c, R.string.sin_app_mapas, Toast.LENGTH_LONG).show();
-        }
+    /** Convierte un ícono (vector) en imagen, para el punto azul de tu ubicación. */
+    public static android.graphics.Bitmap bitmap(Context c, int drawable) {
+        android.graphics.drawable.Drawable d = androidx.core.content.ContextCompat.getDrawable(c, drawable);
+        int w = d.getIntrinsicWidth(), h = d.getIntrinsicHeight();
+        android.graphics.Bitmap b = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas cv = new android.graphics.Canvas(b);
+        d.setBounds(0, 0, w, h);
+        d.draw(cv);
+        return b;
     }
+
+    /**
+     * Cómo llegar: abre la ruta a pie DENTRO de la app (pantalla RutaActivity, en OpenStreetMap),
+     * desde tu ubicación hasta el salón. Ya no abre Google Maps.
+     */
+    public static void comoLlegar(Context c, double lat, double lon, String nombre) {
+        c.startActivity(new Intent(c, RutaActivity.class)
+                .putExtra("lat", lat).putExtra("lon", lon).putExtra("nombre", nombre));
+    }
+
     // ------------------------------------------------------------------
     // Lugares de las clases (un pin por salón, y varias clases en el mismo pin si están juntas)
     // ------------------------------------------------------------------

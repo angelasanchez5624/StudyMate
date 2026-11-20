@@ -22,16 +22,21 @@
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.StudyMate">
+        <!-- Pantalla de carga con el logo animado: es la que abre la app -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Theme.StudyMate.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
@@ -87,6 +92,9 @@
             android:exported="false" />
         <activity
             android:name=".MapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RutaActivity"
             android:exported="false" />
         <activity
             android:name=".StatsActivity"

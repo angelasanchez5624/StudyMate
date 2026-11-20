@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo de la pantalla de carga: el mismo degradado lila → rosado del ícono de la app -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:angle="270"
+        android:startColor="@color/logo_ini"
+        android:endColor="@color/logo_fin"/>
+</shape>

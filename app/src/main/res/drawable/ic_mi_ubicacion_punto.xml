@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tu ubicación en "Cómo llegar": punto azul con borde blanco -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="#334285F4" android:pathData="M12,0a12,12 0,1 1,0 24a12,12 0,1 1,0 -24z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M12,4.5a7.5,7.5 0,1 1,0 15a7.5,7.5 0,1 1,0 -15z"/>
+    <path android:fillColor="#4285F4" android:pathData="M12,6.5a5.5,5.5 0,1 1,0 11a5.5,5.5 0,1 1,0 -11z"/>
+</vector>

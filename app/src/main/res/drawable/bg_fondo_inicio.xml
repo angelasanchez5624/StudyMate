@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo del login y de Crear cuenta: lavanda arriba, casi blanco al centro, rosado abajo -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:angle="270"
+        android:startColor="@color/fondo_inicio_arriba"
+        android:centerColor="@color/fondo_inicio_centro"
+        android:endColor="@color/fondo_inicio_abajo"/>
+</shape>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla de carga (splash) con el logo animado -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_splash">
+
+    <LinearLayout
+        android:id="@+id/centroSplash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- El logo (libro + birrete), del mismo tamaño que en el splash del sistema -->
+        <ImageView
+            android:id="@+id/ivLogoSplash"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_launcher_foreground"/>
+
+        <TextView
+            android:id="@+id/tvNombreSplash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-24dp"
+            android:alpha="0"
+            android:text="@string/app_name"
+            android:textColor="@color/splash_texto"
+            android:textSize="36sp"
+            android:fontFamily="@font/nunito_extrabold"
+            android:importantForAccessibility="no"/>
+
+        <TextView
+            android:id="@+id/tvLemaSplash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0"
+            android:text="@string/lema"
+            android:textColor="@color/splash_texto"
+            android:textSize="16sp"
+            android:fontFamily="@font/nunito_semibold"/>
+    </LinearLayout>
+
+    <!-- Tres puntos que "laten" mientras carga -->
+    <LinearLayout
+        android:id="@+id/puntosSplash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="72dp"
+        android:alpha="0"
+        android:orientation="horizontal"
+        android:importantForAccessibility="no">
+        <View android:id="@+id/punto1" android:layout_width="9dp" android:layout_height="9dp"
+            android:background="@drawable/bg_punto_splash"/>
+        <View android:id="@+id/punto2" android:layout_width="9dp" android:layout_height="9dp"
+            android:layout_marginStart="9dp" android:background="@drawable/bg_punto_splash"/>
+        <View android:id="@+id/punto3" android:layout_width="9dp" android:layout_height="9dp"
+            android:layout_marginStart="9dp" android:background="@drawable/bg_punto_splash"/>
+    </LinearLayout>
+</FrameLayout>

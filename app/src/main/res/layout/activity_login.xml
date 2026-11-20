@@ -3,23 +3,114 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream">
+    android:background="@drawable/bg_fondo_inicio">
 
-    <!-- Burbujas decorativas (top:-40 right:-40 180px / top:60 left:-50 120px) -->
+    <!-- Burbujas y puntitos pastel decorativos (detrás de todo) -->
     <View
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="168dp"
+        android:layout_height="168dp"
         android:layout_gravity="top|end"
-        android:layout_marginTop="-40dp"
-        android:layout_marginEnd="-40dp"
+        android:layout_marginTop="-48dp"
+        android:layout_marginEnd="-48dp"
         android:background="@drawable/bg_blob_blue"/>
     <View
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="132dp"
+        android:layout_height="132dp"
         android:layout_gravity="top|start"
-        android:layout_marginTop="60dp"
-        android:layout_marginStart="-50dp"
+        android:layout_marginTop="54dp"
+        android:layout_marginStart="-66dp"
         android:background="@drawable/bg_blob_lilac"/>
+    <View
+        android:layout_width="132dp"
+        android:layout_height="132dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="-54dp"
+        android:layout_marginStart="-54dp"
+        android:background="@drawable/bg_blob_pink"/>
+    <View
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="456dp"
+        android:layout_marginEnd="-60dp"
+        android:background="@drawable/bg_blob_mint"/>
+    <View
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="274dp"
+        android:layout_marginEnd="31dp"
+        android:background="@drawable/bg_blob_yellow"/>
+    <View
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="372dp"
+        android:layout_marginStart="-19dp"
+        android:background="@drawable/bg_blob_blue"/>
+    <View
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="108dp"
+        android:layout_marginEnd="-29dp"
+        android:background="@drawable/bg_blob_lilac"/>
+    <View
+        android:layout_width="31dp"
+        android:layout_height="31dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="216dp"
+        android:layout_marginStart="19dp"
+        android:background="@drawable/bg_blob_pink"/>
+    <View
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="564dp"
+        android:layout_marginStart="-12dp"
+        android:background="@drawable/bg_blob_yellow"/>
+    <View
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="34dp"
+        android:layout_marginStart="120dp"
+        android:background="@drawable/bg_blob_pink"/>
+    <View
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="180dp"
+        android:background="@drawable/bg_blob_mint"/>
+    <View
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="142dp"
+        android:background="@drawable/bg_blob_lilac"/>
+    <View
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="278dp"
+        android:layout_marginStart="53dp"
+        android:background="@drawable/bg_blob_mint"/>
+    <View
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="48dp"
+        android:background="@drawable/bg_blob_yellow"/>
+    <View
+        android:layout_width="11dp"
+        android:layout_height="11dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="72dp"
+        android:layout_marginStart="156dp"
+        android:background="@drawable/bg_blob_blue"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -137,7 +228,7 @@
                 android:text="@string/correo"/>
             <EditText
                 android:id="@+id/etCorreo"
-                style="@style/App.Input"
+                style="@style/App.Input.Claro"
                 android:hint="@string/correo_hint"
                 android:inputType="textEmailAddress"/>
 
@@ -157,7 +248,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
-                    style="@style/App.Input"
+                    style="@style/App.Input.Claro"
                     android:layout_marginTop="0dp"
                     android:hint="@string/contrasena_hint"
                     android:inputType="textPassword"/>
@@ -223,6 +314,66 @@
                 android:indeterminate="true"
                 android:visibility="gone"
                 android:contentDescription="@string/iniciando_sesion"
+                app:indicatorColor="@color/boton"
+                app:trackCornerRadius="4dp"/>
+
+            <!-- ─── o ─── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:importantForAccessibility="noHideDescendants">
+                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"
+                    android:background="@color/divider"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:text="@string/o"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_muted"
+                    android:fontFamily="@font/nunito_semibold"/>
+                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"
+                    android:background="@color/divider"/>
+            </LinearLayout>
+
+            <!-- Continuar con Google -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGoogle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="48dp"
+                android:text="@string/continuar_google"
+                android:textAllCaps="false"
+                android:letterSpacing="0"
+                android:textSize="14sp"
+                android:textColor="@color/text_label"
+                android:fontFamily="@font/nunito_semibold"
+                app:backgroundTint="@color/card_bg"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconSize="18dp"
+                app:iconTint="@null"
+                app:strokeColor="@color/borde_google"
+                app:strokeWidth="1dp"/>
+
+            <!-- Se ve mientras se entra con Google (su propia barra, debajo de su botón) -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progresoGoogle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                android:contentDescription="@string/conectando_google"
                 app:indicatorColor="@color/boton"
                 app:trackCornerRadius="4dp"/>
 

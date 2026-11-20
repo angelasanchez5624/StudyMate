@@ -38,6 +38,7 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        SinConexion.vigilar(this, true); // franja "Sin conexión a internet" arriba (estilo Nequi)
         Ui.insets(this);
         BottomNavHelper.setup(this, BottomNavHelper.INICIO);
 
@@ -118,6 +119,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         menu.refrescar(); // por si cambiaron las notificaciones, el idioma o el tema
     }
 

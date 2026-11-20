@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Borde suave del botón "Continuar con Google" -->
+    <color name="borde_google">#3D3850</color>
+</resources>

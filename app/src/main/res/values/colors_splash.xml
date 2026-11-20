@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Texto sobre el degradado del splash (contraste ≥ 7:1 sobre #C4B5E8 y #F4B8C8) -->
+    <color name="splash_texto">#2E2350</color>
+    <!-- Borde suave del botón "Continuar con Google" -->
+    <color name="borde_google">#DCDAE5</color>
+</resources>

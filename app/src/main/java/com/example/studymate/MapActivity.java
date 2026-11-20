@@ -47,6 +47,16 @@ public class MapActivity extends AppCompatActivity {
 
         mapa = findViewById(R.id.mapa);
         Mapa.preparar(mapa);
+        // Tocar una parte vacía del mapa cierra la burbuja abierta (así se puede elegir otro pin)
+        mapa.getOverlays().add(0, new org.osmdroid.views.overlay.MapEventsOverlay(
+                new org.osmdroid.events.MapEventsReceiver() {
+                    @Override public boolean singleTapConfirmedHelper(GeoPoint p) {
+                        org.osmdroid.views.overlay.infowindow.InfoWindow.closeAllInfoWindowsOn(mapa);
+                        abierto = null;
+                        return true;
+                    }
+                    @Override public boolean longPressHelper(GeoPoint p) { return false; }
+                }));
         mapa.getController().setZoom(Mapa.ZOOM_CIUDAD);
         mapa.getController().setCenter(new GeoPoint(Mapa.LAT_DEFECTO, Mapa.LON_DEFECTO));
 
@@ -145,6 +155,7 @@ public class MapActivity extends AppCompatActivity {
 
     /** Muestra la burbuja del pin; tocar la burbuja abre la materia (antes solo la cerraba). */
     private void mostrarBurbuja(Marker m, Mapa.Lugar lugar) {
+        org.osmdroid.views.overlay.infowindow.InfoWindow.closeAllInfoWindowsOn(mapa);
         m.showInfoWindow();
         abierto = clave(lugar);
         android.view.View burbuja = m.getInfoWindow() == null ? null : m.getInfoWindow().getView();
@@ -184,7 +195,14 @@ public class MapActivity extends AppCompatActivity {
     private void mostrarMiUbicacion() {
         if (miUbicacion == null) {
             miUbicacion = new MyLocationNewOverlay(new GpsMyLocationProvider(this), mapa);
-            mapa.getOverlays().add(miUbicacion);
+            // Punto azul en vez del muñeco amarillo, y sin el círculo grande de precisión
+            android.graphics.Bitmap punto = Mapa.bitmap(this, R.drawable.ic_mi_ubicacion_punto);
+            miUbicacion.setPersonIcon(punto);
+            miUbicacion.setDirectionArrow(punto, punto);
+            miUbicacion.setPersonAnchor(0.5f, 0.5f);
+            miUbicacion.setDirectionAnchor(0.5f, 0.5f);
+            miUbicacion.setDrawAccuracyEnabled(false);
+            mapa.getOverlays().add(1, miUbicacion); // debajo de los pines: no tapa la mano
         }
         miUbicacion.enableMyLocation();
     }

@@ -40,7 +40,10 @@ public class RegisterActivity extends AppCompatActivity {
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
         findViewById(R.id.tvIniciarSesion).setOnClickListener(v -> finish());
 
+        SinConexion.vigilar(this, false); // sin internet no se puede crear la cuenta
+
         btnRegistrar.setOnClickListener(v -> {
+            if (!SinConexion.revisar(this)) return;
             String nombre = etNombre.getText().toString().trim();
             String correo = etCorreo.getText().toString().trim();
             String pass = etPassword.getText().toString();

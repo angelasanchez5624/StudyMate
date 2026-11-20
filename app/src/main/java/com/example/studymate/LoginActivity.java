@@ -25,6 +25,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Solo entra directo si inició sesión desde este Login antes
         if (Sesion.activa(this)) {
+            // Mientras confirma la cuenta se ve el logo (no una pantalla en blanco)
+            setContentView(R.layout.activity_splash);
+            findViewById(R.id.tvNombreSplash).setAlpha(1f);
+            findViewById(R.id.tvLemaSplash).setAlpha(1f);
             // Confirma que la cuenta todavía existe en Firebase
             auth.getCurrentUser().reload().addOnCompleteListener(t -> {
                 if (t.isSuccessful() || t.getException() instanceof FirebaseNetworkException) {
@@ -62,7 +66,11 @@ public class LoginActivity extends AppCompatActivity {
         etCorreo.addTextChangedListener(quitarError);
         etPassword.addTextChangedListener(quitarError);
 
+        // Sin internet no se puede iniciar sesión: se avisa al abrir y al tocar los botones
+        SinConexion.vigilar(this, false);
+
         btnIngresar.setOnClickListener(v -> {
+            if (!SinConexion.revisar(this)) return;
             String correo = etCorreo.getText().toString().trim();
             String pass = etPassword.getText().toString();
 
@@ -95,6 +103,13 @@ public class LoginActivity extends AppCompatActivity {
             });
         });
 
+        // Continuar con Google
+        MaterialButton btnGoogle = findViewById(R.id.btnGoogle);
+        btnGoogle.setOnClickListener(v -> {
+            // La barra de carga de Google va debajo de su botón (la del botón morado es del login con correo)
+            if (SinConexion.revisar(this)) entrarConGoogle(btnGoogle, findViewById(R.id.progresoGoogle), tvError);
+        });
+
         findViewById(R.id.tvCrearCuenta).setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class)));
 
@@ -105,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 etCorreo.setError(getString(R.string.correo_para_enlace));
                 return;
             }
+            if (!SinConexion.revisar(this)) return;
             auth.sendPasswordResetEmail(correo).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(this, R.string.enlace_enviado, Toast.LENGTH_LONG).show();
@@ -113,6 +129,98 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    // ---------------- Iniciar sesión con Google ----------------
+
+    /**
+     * Muestra la ventana de Google para elegir la cuenta (Credential Manager) y con esa cuenta
+     * inicia sesión en Firebase. Si es la primera vez, crea su perfil en la base de datos.
+     *
+     * Requisitos en Firebase (una sola vez): Authentication → Sign-in method → Google activado,
+     * la huella SHA-1 del proyecto agregada y el google-services.json descargado de nuevo.
+     */
+    private void entrarConGoogle(MaterialButton btn, android.view.View progreso, android.widget.TextView tvError) {
+        // "default_web_client_id" lo genera Gradle a partir de google-services.json
+        int idCliente = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
+        if (idCliente == 0) {
+            mostrarError(tvError, getString(R.string.google_sin_configurar));
+            return;
+        }
+        tvError.setVisibility(android.view.View.GONE);
+        btn.setEnabled(false);
+        btn.setText(R.string.conectando_google);
+        progreso.setVisibility(android.view.View.VISIBLE);
+
+        com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption opcion =
+                new com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption.Builder(getString(idCliente)).build();
+        androidx.credentials.GetCredentialRequest pedido = new androidx.credentials.GetCredentialRequest.Builder()
+                .addCredentialOption(opcion).build();
+
+        androidx.credentials.CredentialManager.create(this).getCredentialAsync(this, pedido,
+                new android.os.CancellationSignal(), androidx.core.content.ContextCompat.getMainExecutor(this),
+                new androidx.credentials.CredentialManagerCallback<androidx.credentials.GetCredentialResponse,
+                        androidx.credentials.exceptions.GetCredentialException>() {
+                    @Override
+                    public void onResult(androidx.credentials.GetCredentialResponse respuesta) {
+                        androidx.credentials.Credential c = respuesta.getCredential();
+                        if (c instanceof androidx.credentials.CustomCredential && c.getType().equals(
+                                com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
+                            // Ya eligió la cuenta: el botón de Google muestra "Iniciando sesión…"
+                            btn.setText(R.string.iniciando_sesion);
+                            String token = com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+                                    .createFrom(c.getData()).getIdToken();
+                            firebaseConGoogle(token, btn, progreso, tvError);
+                        } else {
+                            fallaGoogle(btn, progreso, tvError, getString(R.string.google_error));
+                        }
+                    }
+
+                    @Override
+                    public void onError(androidx.credentials.exceptions.GetCredentialException e) {
+                        if (e instanceof androidx.credentials.exceptions.GetCredentialCancellationException) {
+                            fallaGoogle(btn, progreso, tvError, null); // la persona cerró la ventana
+                        } else if (e instanceof androidx.credentials.exceptions.NoCredentialException) {
+                            fallaGoogle(btn, progreso, tvError, getString(R.string.google_sin_cuenta));
+                        } else {
+                            fallaGoogle(btn, progreso, tvError, getString(R.string.google_error));
+                        }
+                    }
+                });
+    }
+
+    private void firebaseConGoogle(String token, MaterialButton btn, android.view.View progreso, android.widget.TextView tvError) {
+        auth.signInWithCredential(com.google.firebase.auth.GoogleAuthProvider.getCredential(token, null))
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful() || auth.getCurrentUser() == null) {
+                        fallaGoogle(btn, progreso, tvError, mensajeError(task.getException()));
+                        return;
+                    }
+                    com.google.firebase.auth.FirebaseUser u = auth.getCurrentUser();
+                    com.google.firebase.database.DatabaseReference ref = com.google.firebase.database.FirebaseDatabase
+                            .getInstance().getReference("users").child(u.getUid());
+                    // Primera vez con Google: se crea el perfil (mismos datos que al registrarse)
+                    ref.get().addOnCompleteListener(t -> {
+                        if (t.isSuccessful() && !t.getResult().exists()) {
+                            java.util.Map<String, Object> datos = new java.util.HashMap<>();
+                            datos.put("nombre", u.getDisplayName() == null ? "" : u.getDisplayName());
+                            datos.put("correo", u.getEmail() == null ? "" : u.getEmail());
+                            datos.put("carrera", "");
+                            datos.put("semestre", "");
+                            datos.put("creado", com.google.firebase.database.ServerValue.TIMESTAMP);
+                            ref.setValue(datos);
+                        }
+                        Sesion.iniciar(this);
+                        entrarConPerfil();
+                    });
+                });
+    }
+
+    private void fallaGoogle(MaterialButton btn, android.view.View progreso, android.widget.TextView tvError, String mensaje) {
+        btn.setEnabled(true);
+        btn.setText(R.string.continuar_google);
+        progreso.setVisibility(android.view.View.GONE);
+        if (mensaje != null) mostrarError(tvError, mensaje);
     }
 
     /**

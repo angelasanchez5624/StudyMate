@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modo oscuro: el mismo degradado en tonos oscuros -->
+<resources>
+    <color name="fondo_inicio_arriba">#1E1A2E</color>
+    <color name="fondo_inicio_centro">#16141E</color>
+    <color name="fondo_inicio_abajo">#21161D</color>
+</resources>
