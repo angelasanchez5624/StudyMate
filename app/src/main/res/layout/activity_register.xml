@@ -35,11 +35,11 @@
         android:layout_marginStart="-66dp"
         android:background="@drawable/bg_blob_lilac"/>
     <View
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="29dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="-40dp"
         android:background="@drawable/bg_blob_yellow"/>
     <View
         android:layout_width="36dp"
@@ -62,41 +62,6 @@
         android:layout_marginBottom="192dp"
         android:layout_marginStart="-29dp"
         android:background="@drawable/bg_blob_blue"/>
-    <View
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="144dp"
-        android:background="@drawable/bg_blob_pink"/>
-    <View
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_gravity="top|start"
-        android:layout_marginTop="115dp"
-        android:layout_marginStart="180dp"
-        android:background="@drawable/bg_blob_lilac"/>
-    <View
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_gravity="top|start"
-        android:layout_marginTop="524dp"
-        android:layout_marginStart="12dp"
-        android:background="@drawable/bg_blob_yellow"/>
-    <View
-        android:layout_width="11dp"
-        android:layout_height="11dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="90dp"
-        android:background="@drawable/bg_blob_mint"/>
-    <View
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_gravity="bottom|start"
-        android:layout_marginBottom="24dp"
-        android:layout_marginStart="180dp"
-        android:background="@drawable/bg_blob_yellow"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -238,6 +203,22 @@
                     android:hint="@string/contrasena_repite_hint"
                     android:inputType="textPassword"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Error al crear la cuenta: ⚠ + texto rojo (igual que en el login; se oculta al escribir) -->
+            <TextView
+                android:id="@+id/tvErrorRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_alerta"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/red_text"
+                android:gravity="center_vertical"
+                android:accessibilityLiveRegion="polite"
+                android:textSize="13sp"
+                android:textColor="@color/red_text"
+                android:fontFamily="@font/nunito_bold"
+                android:visibility="gone"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegistrar"

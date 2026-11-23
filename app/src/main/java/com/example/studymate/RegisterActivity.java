@@ -42,6 +42,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         SinConexion.vigilar(this, false); // sin internet no se puede crear la cuenta
 
+        // Aviso de error debajo de los campos (⚠ + texto rojo), en vez del "!" de Android que tapaba el ojito
+        android.widget.TextView tvError = findViewById(R.id.tvErrorRegistro);
+        android.text.TextWatcher ocultarError = new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { tvError.setVisibility(android.view.View.GONE); }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        };
+        etNombre.addTextChangedListener(ocultarError);
+        etCorreo.addTextChangedListener(ocultarError);
+        etPassword.addTextChangedListener(ocultarError);
+        etConfirmar.addTextChangedListener(ocultarError);
+
         btnRegistrar.setOnClickListener(v -> {
             if (!SinConexion.revisar(this)) return;
             String nombre = etNombre.getText().toString().trim();
@@ -49,10 +61,10 @@ public class RegisterActivity extends AppCompatActivity {
             String pass = etPassword.getText().toString();
             String confirmar = etConfirmar.getText().toString();
 
-            if (nombre.isEmpty()) { etNombre.setError(getString(R.string.nombre_error)); return; }
-            if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) { etCorreo.setError(getString(R.string.correo_invalido)); return; }
-            if (pass.length() < 6) { etPassword.setError(getString(R.string.min_6)); return; }
-            if (!pass.equals(confirmar)) { etConfirmar.setError(getString(R.string.claves_no_coinciden)); return; }
+            if (nombre.isEmpty()) { mostrarError(tvError, etNombre, R.string.nombre_error); return; }
+            if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) { mostrarError(tvError, etCorreo, R.string.correo_invalido); return; }
+            if (pass.length() < 6) { mostrarError(tvError, etPassword, R.string.min_6); return; }
+            if (!pass.equals(confirmar)) { mostrarError(tvError, etConfirmar, R.string.claves_no_coinciden); return; }
 
             btnRegistrar.setEnabled(false);
 
@@ -61,7 +73,8 @@ public class RegisterActivity extends AppCompatActivity {
             auth.createUserWithEmailAndPassword(correo, pass).addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     btnRegistrar.setEnabled(true);
-                    Toast.makeText(this, mensajeError(task.getException()), Toast.LENGTH_LONG).show();
+                    tvError.setText(mensajeError(task.getException()));
+                    tvError.setVisibility(android.view.View.VISIBLE);
                     return;
                 }
 
@@ -100,5 +113,12 @@ public class RegisterActivity extends AppCompatActivity {
         if (e instanceof FirebaseAuthWeakPasswordException) return getString(R.string.clave_debil);
         if (e instanceof FirebaseAuthInvalidCredentialsException) return getString(R.string.correo_no_valido);
         return getString(R.string.error_crear_cuenta);
+    }
+
+    /** Muestra el error debajo de los campos y pone el cursor en el campo que hay que corregir. */
+    private void mostrarError(android.widget.TextView tv, android.widget.EditText campo, int mensaje) {
+        tv.setText(mensaje);
+        tv.setVisibility(android.view.View.VISIBLE);
+        campo.requestFocus();
     }
 }
