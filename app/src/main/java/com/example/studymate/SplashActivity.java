@@ -18,7 +18,7 @@ import androidx.core.splashscreen.SplashScreen;
 /**
  * Pantalla de carga (splash) con el logo animado, al estilo de las apps de bancos:
  *  1. El logo aparece creciendo con un pequeño rebote.
- *  2. Sube "StudyMate" y aparece el lema "Tu agenda universitaria".
+ *  2. "StudyMate" se escribe de izquierda a derecha y luego aparece el lema "Tu agenda universitaria".
  *  3. Tres puntos laten mientras carga.
  *  4. Abre Inicio (si ya hay sesión) o el Login. La sesión se revisa DURANTE la animación,
  *     así no queda una pantalla en blanco entre el splash y la app.
@@ -40,8 +40,12 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splash = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
-        // El splash del sistema se quita al instante: la animación sigue en esta pantalla
-        splash.setOnExitAnimationListener(vista -> vista.remove());
+        // El splash del sistema se desvanece suave (antes se quitaba de golpe y el logo "saltaba"):
+        // debajo ya va corriendo la animación, así que se ve como una sola transición.
+        splash.setOnExitAnimationListener(vista -> vista.getView().animate()
+                .alpha(0f).setDuration(450)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(vista::remove).start());
         setContentView(R.layout.activity_splash);
         Ajustes.cargar(this); // formato de hora elegido en Configuración
         prepararSesion();     // mientras corre la animación se revisa la sesión y se lee el perfil
@@ -59,23 +63,36 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         // 1. Logo: crece con rebote y da un pequeño giro
-        logo.setScaleX(0.55f);
-        logo.setScaleY(0.55f);
-        logo.setAlpha(0f);
+        // Empieza casi del mismo tamaño del logo del sistema y crece suave, sin aparecer de golpe
+        logo.setScaleX(0.85f);
+        logo.setScaleY(0.85f);
+        logo.setAlpha(0.6f);
         logo.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(650)
-                .setInterpolator(new OvershootInterpolator(2.2f)).start();
+                .setInterpolator(new OvershootInterpolator(1.4f)).start();
         ObjectAnimator giro = ObjectAnimator.ofFloat(logo, View.ROTATION, -8f, 6f, -3f, 0f);
         giro.setDuration(700);
         giro.setStartDelay(150);
         giro.start();
 
-        // 2. Nombre y lema suben y aparecen
+        // 2. "StudyMate" se va escribiendo de izquierda a derecha; luego sube el lema
         float sube = 24 * getResources().getDisplayMetrics().density;
-        nombre.setTranslationY(sube);
-        nombre.animate().alpha(1f).translationY(0f).setStartDelay(450).setDuration(450)
-                .setInterpolator(new DecelerateInterpolator()).start();
+        nombre.setAlpha(1f);
+        nombre.setClipBounds(new android.graphics.Rect(0, 0, 0, 0)); // empieza oculto
+        nombre.post(() -> {
+            int ancho = nombre.getWidth(), alto = nombre.getHeight();
+            ValueAnimator escribir = ValueAnimator.ofInt(0, ancho);
+            escribir.setStartDelay(450);
+            escribir.setDuration(700);
+            escribir.setInterpolator(new DecelerateInterpolator());
+            escribir.addUpdateListener(a ->
+                    nombre.setClipBounds(new android.graphics.Rect(0, 0, (int) a.getAnimatedValue(), alto)));
+            escribir.addListener(new android.animation.AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(android.animation.Animator a) { nombre.setClipBounds(null); }
+            });
+            escribir.start();
+        });
         lema.setTranslationY(sube / 2);
-        lema.animate().alpha(0.9f).translationY(0f).setStartDelay(650).setDuration(450)
+        lema.animate().alpha(0.9f).translationY(0f).setStartDelay(1050).setDuration(450)
                 .setInterpolator(new DecelerateInterpolator()).start();
 
         // 3. Puntos que laten uno detrás de otro
