@@ -77,12 +77,19 @@ public class SinConexion {
                 a.runOnUiThread(() -> { if (ok) ocultar(franja); else mostrar(franja); });
             }
             @Override public void onLost(Network n) {
-                a.runOnUiThread(() -> { if (!hayInternet(a)) mostrar(franja); });
+                // Se perdió la red principal: se muestra directo. (Antes se volvía a preguntar por la
+                // conexión y Android a veces aún respondía con la red que se estaba yendo, así que la
+                // franja no salía la segunda vez.) Si entra otra red con internet, onCapabilitiesChanged la quita.
+                a.runOnUiThread(() -> mostrar(franja));
             }
         };
         try { cm.registerDefaultNetworkCallback(escucha); } catch (Exception ignored) { }
-        // Al cerrar la pantalla se deja de escuchar
         a.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            // Al volver a la pantalla (desde otra app u otra pantalla) se revisa de nuevo
+            @Override public void onResume(LifecycleOwner owner) {
+                if (hayInternet(a)) ocultar(franja); else mostrar(franja);
+            }
+            // Al cerrar la pantalla se deja de escuchar
             @Override public void onDestroy(LifecycleOwner owner) {
                 try { cm.unregisterNetworkCallback(escucha); } catch (Exception ignored) { }
             }
@@ -103,18 +110,27 @@ public class SinConexion {
         return false;
     }
 
+    // La etiqueta guarda si la franja debe verse; así mostrar/ocultar funcionan aunque la otra
+    // animación no haya terminado (antes, si se ocultaba y se volvía a ir el internet enseguida,
+    // la franja quedaba escondida).
     private static void mostrar(View aviso) {
-        if (aviso.getVisibility() == View.VISIBLE) return;
+        if (Boolean.TRUE.equals(aviso.getTag(R.id.avisoSinConexion))) return;
+        aviso.setTag(R.id.avisoSinConexion, true);
+        aviso.animate().cancel();
         aviso.setVisibility(View.VISIBLE);
         aviso.setAlpha(0f);
         aviso.setTranslationY(-aviso.getResources().getDisplayMetrics().density * 24);
-        aviso.animate().alpha(1f).translationY(0f).setDuration(250).start();
+        aviso.animate().alpha(1f).translationY(0f).setDuration(250).withEndAction(null).start();
     }
 
     private static void ocultar(View aviso) {
-        if (aviso.getVisibility() != View.VISIBLE) return;
+        if (!Boolean.TRUE.equals(aviso.getTag(R.id.avisoSinConexion))) return;
+        aviso.setTag(R.id.avisoSinConexion, false);
+        aviso.animate().cancel();
         aviso.animate().alpha(0f).translationY(-aviso.getResources().getDisplayMetrics().density * 24)
-                .setDuration(200).withEndAction(() -> aviso.setVisibility(View.GONE)).start();
+                .setDuration(200).withEndAction(() -> {
+                    if (!Boolean.TRUE.equals(aviso.getTag(R.id.avisoSinConexion))) aviso.setVisibility(View.GONE);
+                }).start();
     }
 
     private static int dp(Activity a, int v) {
